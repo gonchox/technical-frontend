@@ -1,10 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_testt/models/Order.dart'; // Import your Order model
-
-
-import '../endpoints/serviceApi.dart'; // Import your service functions
+import 'package:flutter_testt/models/Order.dart';
+import '../endpoints/serviceApi.dart';
+import 'AddEditView.dart';
 
 class MyOrdersView extends StatefulWidget {
   @override
@@ -32,11 +31,9 @@ class _MyOrdersViewState extends State<MyOrdersView> {
           orders = fetchedOrders;
         });
       } else {
-        // Handle error cases
         print('Failed to load orders: ${response.statusCode}');
       }
     } catch (e) {
-      // Handle network errors or other exceptions
       print('Error fetching orders: $e');
     }
   }
@@ -55,8 +52,8 @@ class _MyOrdersViewState extends State<MyOrdersView> {
                 columns: [
                   DataColumn(label: Text('ID')),
                   DataColumn(label: Text('Order #')),
-                  DataColumn(label: Text('Date')), // Replace with actual date field from Order model
-                  DataColumn(label: Text('# Products')), // You need to calculate this based on products list in Order model
+                  DataColumn(label: Text('Date')),
+                  DataColumn(label: Text('# Products')),
                   DataColumn(label: Text('Final Price')),
                   DataColumn(label: Text('Options')),
                 ],
@@ -64,22 +61,27 @@ class _MyOrdersViewState extends State<MyOrdersView> {
                   return DataRow(cells: [
                     DataCell(Text(order.id.toString())),
                     DataCell(Text(order.orderNumber)),
-                    DataCell(Text('')), // Replace with date field
-                    DataCell(Text(order.products.length.toString())),
+                    DataCell(Text(order.date.toString())),
+                    DataCell(Text(order.numProducts.toString())), // Display numProducts
                     DataCell(Text('\$${order.finalPrice.toStringAsFixed(2)}')),
                     DataCell(Row(
                       children: [
                         IconButton(
                           icon: Icon(Icons.edit),
                           onPressed: () {
-                            // Navigate to Edit Order view
-                            Navigator.pushNamed(context, '/add_edit', arguments: order.id);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => AddEditView(orderId: order.id),
+                              ),
+                            ).then((_) {
+                              fetchOrders(); // Refresh orders after editing
+                            });
                           },
                         ),
                         IconButton(
                           icon: Icon(Icons.delete),
                           onPressed: () {
-                            // Show confirmation dialog
                             showDialog(
                               context: context,
                               builder: (BuildContext context) => AlertDialog(
@@ -94,7 +96,6 @@ class _MyOrdersViewState extends State<MyOrdersView> {
                                   ),
                                   TextButton(
                                     onPressed: () {
-                                      // Call function to delete order
                                       deleteOrder(order.id);
                                       Navigator.of(context).pop();
                                     },
@@ -102,7 +103,9 @@ class _MyOrdersViewState extends State<MyOrdersView> {
                                   ),
                                 ],
                               ),
-                            );
+                            ).then((_) {
+                              fetchOrders(); // Refresh orders after deleting
+                            });
                           },
                         ),
                       ],
@@ -113,8 +116,14 @@ class _MyOrdersViewState extends State<MyOrdersView> {
             ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Navigate to Add/Edit Order view
-          Navigator.pushNamed(context, '/add_edit');
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AddEditView(),
+            ),
+          ).then((_) {
+            fetchOrders(); // Refresh orders after adding new order
+          });
         },
         child: Icon(Icons.add),
       ),
@@ -125,17 +134,14 @@ class _MyOrdersViewState extends State<MyOrdersView> {
     try {
       final response = await http.delete(Uri.parse('${url()}orders/$orderId'), headers: headers());
 
-      if (response.statusCode == 204) {
-        // Order successfully deleted
+      if (response.statusCode == 200) {
         setState(() {
           orders.removeWhere((order) => order.id == orderId);
         });
       } else {
-        // Handle error cases
         print('Failed to delete order: ${response.statusCode}');
       }
     } catch (e) {
-      // Handle network errors or other exceptions
       print('Error deleting order: $e');
     }
   }

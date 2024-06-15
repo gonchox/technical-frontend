@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_testt/views/AddEditView.dart';
 import 'package:flutter_testt/views/MyOrdersView.dart';
 
 void main() {
@@ -16,6 +17,7 @@ class MainApp extends StatelessWidget {
       home: MyOrdersView(),
       routes: {
         '/my-orders': (context) => MyOrdersView(),
+        '/add_edit': (context) => AddEditView()
       }
     );
   }
