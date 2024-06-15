@@ -1,31 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:technical_flutter/AddEditOrderScreen.dart';
-import 'package:technical_flutter/MyOrdersScreen.dart';
-
+import 'package:flutter_testt/views/MyOrdersView.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MainApp());
 }
 
-class MyApp extends StatelessWidget {
+class MainApp extends StatelessWidget {
+  const MainApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'My Orders App',
-      initialRoute: '/my-orders',
+      debugShowCheckedModeBanner: false,
+      title: 'My App',
+      home: MyOrdersView(),
       routes: {
-        '/my-orders': (context) => MyOrdersScreen(),
-        '/add-order': (context) => AddEditOrderScreen(),
-      },
-      onGenerateRoute: (settings) {
-        if (settings.name == '/add-order') {
-          final args = settings.arguments as Map<String, dynamic>;
-          return MaterialPageRoute(
-            builder: (context) => AddEditOrderScreen(orderId: args['id']),
-          );
-        }
-        return null;
-      },
+        '/my-orders': (context) => MyOrdersView(),
+      }
     );
   }
 }
