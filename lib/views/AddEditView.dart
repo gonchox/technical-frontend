@@ -69,10 +69,8 @@ class _AddEditViewState extends State<AddEditView> {
         double unitPrice = json['unitPrice'];
         int quantity = json['quantity'];
 
-        // Create Product object
+        
         Product product = Product(id: productId, name: productName, unitPrice: unitPrice);
-
-        // Create OrderProduct object
         return OrderProduct(orderId: orderId, product: product, quantity: quantity);
       }).toList();
 
@@ -152,7 +150,7 @@ double calculateFinalPrice(List<OrderProduct> products) {
         Map<String, dynamic> jsonResponse = jsonDecode(response.body);
         int newOrderId = jsonResponse['id'];
         await addProductsToOrder(newOrderId);
-        Navigator.of(context).pop(true); // Navigate back with success flag
+        Navigator.of(context).pop(true);
       } else {
         print('Failed to save order: ${response.statusCode}');
       }
@@ -163,7 +161,7 @@ double calculateFinalPrice(List<OrderProduct> products) {
       if (response.statusCode == 200) {
         // Update only necessary products
         await updateProductsInOrder(order.id);
-        Navigator.of(context).pop(true); // Navigate back with success flag
+        Navigator.of(context).pop(true); 
       } else {
         print('Failed to update order: ${response.statusCode}');
       }
@@ -187,11 +185,6 @@ Future<void> updateProductsInOrder(int orderId) async {
 }
 
 
-
-
-
-
-
   Future<void> addProductsToOrder(int orderId) async {
     for (var orderProduct in orderProducts) {
       final response = await http.post(
@@ -213,14 +206,11 @@ Future<void> updateProductsInOrder(int orderId) async {
           op.product.id == selectedProduct!.id);
 
       if (existingIndex != -1) {
-        // Product already exists, update the quantity instead of adding
         orderProducts[existingIndex].quantity += productQuantity;
       } else {
-        // Product doesn't exist, add new product to orderProducts
         orderProducts.add(OrderProduct(orderId: widget.orderId ?? 0, product: selectedProduct!, quantity: productQuantity));
       }
 
-      // Update UI components for existing or new product
       finalPriceController.text = calculateFinalPrice(orderProducts).toStringAsFixed(2);
       numProductsController.text = calculateTotalQuantity(orderProducts).toString();
 
@@ -229,7 +219,6 @@ Future<void> updateProductsInOrder(int orderId) async {
       productQuantity = 1;
     });
 
-    // Call backend function to add/update the product in the order
     addProductsToOrder(widget.orderId ?? 0);
   }
 }
@@ -286,8 +275,7 @@ int calculateTotalQuantity(List<OrderProduct> products) {
                 orderProduct.quantity = newQuantity;
               });
 
-              try {
-                // Call backend to update product quantity
+              try {           
                 final response = await http.put(
                   Uri.parse('${url()}orders/${widget.orderId}/products/${orderProduct.product.id}/$newQuantity'),
                   headers: headers(),
@@ -330,7 +318,7 @@ void removeProduct(OrderProduct orderProduct) {
           TextButton(
             child: Text('Remove'),
             onPressed: () {
-              removeProductFromOrder(widget.orderId ?? 0, orderProduct); // Call backend to remove the product
+              removeProductFromOrder(widget.orderId ?? 0, orderProduct);
 
               Navigator.of(context).pop();
             },
@@ -353,7 +341,6 @@ Future<void> removeProductFromOrder(int orderId, OrderProduct orderProduct) asyn
   }
 
   setState(() {
-    // Update UI after successful removal
     finalPriceController.text = (double.parse(finalPriceController.text) - orderProduct.product.unitPrice * orderProduct.quantity).toStringAsFixed(2);
     numProductsController.text = (int.parse(numProductsController.text) - orderProduct.quantity).toString();
     orderProducts.remove(orderProduct);

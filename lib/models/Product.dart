@@ -18,7 +18,6 @@ class Product {
     );
   }
 
-  // Convert Product object to JSON format
   Map<String, dynamic> toJson() {
     return {
       'id': id,

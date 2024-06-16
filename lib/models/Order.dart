@@ -5,8 +5,9 @@ class Order {
   final String orderNumber;
   final DateTime date;
   final double finalPrice;
-  final int numProducts; // Add this field
+  final int numProducts; 
   List<Product> products;
+  
 
   Order({
     required this.id,

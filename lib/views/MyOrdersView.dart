@@ -62,7 +62,7 @@ class _MyOrdersViewState extends State<MyOrdersView> {
                     DataCell(Text(order.id.toString())),
                     DataCell(Text(order.orderNumber)),
                     DataCell(Text(order.date.toString())),
-                    DataCell(Text(order.numProducts.toString())), // Display numProducts
+                    DataCell(Text(order.numProducts.toString())),
                     DataCell(Text('\$${order.finalPrice.toStringAsFixed(2)}')),
                     DataCell(Row(
                       children: [

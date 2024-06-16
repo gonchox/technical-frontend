@@ -1,4 +1,4 @@
-import 'package:flutter_testt/models/Product.dart'; // Import your Product model
+import 'package:flutter_testt/models/Product.dart';
 
 class OrderProduct {
   final int orderId;
@@ -14,7 +14,7 @@ class OrderProduct {
   factory OrderProduct.fromJson(Map<String, dynamic> json) {
     return OrderProduct(
       orderId: json['order_id'],
-      product: Product.fromJson(json['product']), // Assuming product JSON structure matches Product model
+      product: Product.fromJson(json['product']),
       quantity: json['quantity'],
     );
   }
@@ -22,7 +22,7 @@ class OrderProduct {
   Map<String, dynamic> toJson() {
     return {
       'order_id': orderId,
-      'product_id': product.id, // Assuming Product model has an 'id' field
+      'product_id': product.id,
       'quantity': quantity,
     };
   }
